@@ -7,7 +7,7 @@
    <h2 id="reference">{{ item.reference }}</h2>
    <p>Case ID: {{ item.id }}</p>
    <p>Status: <strong data-testid="case-status">{{ item.status }}</strong></p>
-   <button type="button" (click)="closeCase()">Close case</button>
+   <button type="button" [disabled]="isClosing || item.status === 'CLOSED'"  (click)="closeCase()">{{ isClosing ? 'Closing...' : 'Close case' }}</button>
   </section>
  } @else if (loadError) {
   <p role="alert">{{ loadError }}</p>

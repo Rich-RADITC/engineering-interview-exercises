@@ -10,8 +10,15 @@ public class CaseService {
   return repository.findById(id).orElseThrow(() -> new CaseNotFoundException(id));
  }
  public CaseRecord closeCase(String id) {
+    CaseRecord record = repository.findById(id).orElseThrow(() -> new CaseNotFoundException(id));
+    if(record.getStatus() == CaseStatus.CLOSED) {
+      throw new CaseConflictException(id);
+    }
+    record.setStatus(CaseStatus.CLOSED);
+    return repository.save(record);
+
   // TODO: implement the contract in full-stack/BRIEF.md.
   // This intentional 501 distinguishes unfinished work from a setup failure.
-  throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "Interview task not implemented");
+  //throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "Interview task not implemented");
  }
 }

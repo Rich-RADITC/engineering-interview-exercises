@@ -6,6 +6,7 @@ export class AppComponent implements OnInit {
  caseItem?: CaseItem;
  loadError = '';
  taskMessage = '';
+ isClosing = false;
  ngOnInit(): void {
   this.caseService.getCase('case-001').subscribe({
    next: item => { this.caseItem = item; },
@@ -13,7 +14,15 @@ export class AppComponent implements OnInit {
   });
  }
  closeCase(): void {
-  // TODO: implement the interaction described in full-stack/BRIEF.md.
-  this.taskMessage = 'The Close case action is your interview task.';
- }
+    if(this.isClosing || !this.caseItem || this.caseItem.status !== 'OPEN') {
+        return;
+    }
+    this.isClosing = true;
+    this.taskMessage = 'Closing the case...';
+    this.caseService.closeCase(this.caseItem.id).subscribe({
+    next: item => { this.isClosing = true; this.taskMessage = 'The case has been closed.'; },
+   error: () => { this.taskMessage = 'Failed to close the case.'; }
+  });
 }
+}
+  
