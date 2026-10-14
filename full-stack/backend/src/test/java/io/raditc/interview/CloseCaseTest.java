@@ -14,5 +14,16 @@ class CloseCaseTest {
   assertEquals(CaseStatus.CLOSED, updated.getStatus());
   verify(repository).save(any(CaseRecord.class));
  }
- // TODO: add focused tests for the other required behaviours.
+ @Test void throwsNotFoundForMissingCaseAndDoesNotSave() {
+  CaseRepository repository = mock(CaseRepository.class);
+  when(repository.findById("missing")).thenReturn(Optional.empty());
+  assertThrows(CaseNotFoundException.class, () -> new CaseService(repository).closeCase("missing"));
+  verify(repository, never()).save(any(CaseRecord.class));
+ }
+ @Test void throwsConflictForAlreadyClosedCaseAndDoesNotSave() {
+  CaseRepository repository = mock(CaseRepository.class);
+  when(repository.findById("case-002")).thenReturn(Optional.of(new CaseRecord("case-002", "TEST-002", CaseStatus.CLOSED)));
+  assertThrows(CaseConflictException.class, () -> new CaseService(repository).closeCase("case-002"));
+  verify(repository, never()).save(any(CaseRecord.class));
+ }
 }

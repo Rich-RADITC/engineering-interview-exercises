@@ -1,18 +1,23 @@
 <main>
  <p class="eyebrow">Engineering interview · Full stack</p>
  <h1>Case details</h1>
- <p class="notice">Fictional data. The Close case action is intentionally unfinished.</p>
+ <p class="notice">Fictional data for a local exercise.</p>
  @if (caseItem; as item) {
   <section aria-labelledby="reference">
    <h2 id="reference">{{ item.reference }}</h2>
    <p>Case ID: {{ item.id }}</p>
    <p>Status: <strong data-testid="case-status">{{ item.status }}</strong></p>
-   <button type="button" (click)="closeCase()">Close case</button>
+   <button type="button" (click)="closeCase()" [disabled]="item.status !== 'OPEN' || submitting" [attr.aria-busy]="submitting">
+    {{ submitting ? 'Closing...' : 'Close case' }}
+   </button>
   </section>
  } @else if (loadError) {
   <p role="alert">{{ loadError }}</p>
  } @else {
   <p role="status">Loading case...</p>
  }
- <p role="status">{{ taskMessage }}</p>
+ <p role="status" aria-live="polite">{{ taskMessage }}</p>
+ @if (errorMessage) {
+  <p role="alert" data-testid="close-error">{{ errorMessage }}</p>
+ }
 </main>
